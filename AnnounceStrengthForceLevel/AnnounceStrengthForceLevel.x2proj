@@ -7,10 +7,15 @@
     <SteamPublishID>0</SteamPublishID>
     <AssemblyName>AnnounceStrengthForceLevel</AssemblyName>
     <RootNamespace>AnnounceStrengthForceLevel</RootNamespace>
+    <ProjectGuid>{d19ddc59-cfd5-4591-8550-82317946932f}</ProjectGuid>
   </PropertyGroup>
+  <PropertyGroup>
+    <SolutionRoot>$(MSBuildProjectDirectory)\..\</SolutionRoot>
+    <ScriptsDir>$(SolutionRoot).scripts\\</ScriptsDir>
+    <BuildCommonRoot>$(ScriptsDir)X2ModBuildCommon\</BuildCommonRoot>
+  </PropertyGroup>
+  <Import Project="$(BuildCommonRoot)XCOM2.targets" />
   <ItemGroup>
-    
-    
     <Folder Include="Config\" />
     <Folder Include="Config\Base\" />
     <Folder Include="Localization\" />
@@ -19,40 +24,31 @@
     <Folder Include="ContentForCook\" />
     <Folder Include="Src\AnnounceStrengthForceLevel\" />
     <Folder Include="Src\AnnounceStrengthForceLevel\Classes\" />
-  </ItemGroup>
-  <ItemGroup>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    <Folder Include="Src\ModConfigMenuAPI\" />
+    <Folder Include="Src\ModConfigMenuAPI\Classes\" />
     <Content Include="ReadMe.txt" />
     <Content Include="ModPreview.jpg" />
-    <Content Include="ContentOptions.json" />
     <Content Include="Config\Base\XComEditor.ini" />
     <Content Include="Config\Base\XComEngine.ini" />
     <Content Include="Config\Base\XComGame.ini" />
-    <Content Include="Config\XComTemplateCreator.ini" />
-    <Content Include="Config\XComTemplateEditor.ini" />
-    <Content Include="Localization\XComGame.int" />
-    <Content Include="Localization\AnnounceStrengthForceLevel.int" />
-    <Content Include="Src\extra_globals.uci" />
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\X2DLCInfo_AnnounceStrengthForceLevel.uc" />
-    <Content Include="Src\AnnounceStrengthForceLevel\Classes\Help.uc" />
-    <Content Include="Src\AnnounceStrengthForceLevel\Classes\ConfigEngine.uc" />
+    <Content Include="Config\XComAnnounceStrengthForceLevel_Logger.ini" />
+    <Content Include="Src\AnnounceStrengthForceLevel\LoggerMacros.uci" />
+    <Content Include="Src\AnnounceStrengthForceLevel\Classes\Logger.uc" />
+    <Content Include="Src\AnnounceStrengthForceLevel\Classes\Version.uc" />
+    <Content Include="Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci" />
+    <Content Include="Src\ModConfigMenuAPI\MCM_API_Includes.uci" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Button.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Checkbox.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Dropdown.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Instance.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Label.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Setting.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_SettingsGroup.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_SettingsPage.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Slider.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Spinner.uc" />
+    <Content Include="Src\ModConfigMenuAPI\Classes\UIAlertPanel_ShowEnemies.uc" />
   </ItemGroup>
-  <PropertyGroup>
-    <SolutionRoot>$(MSBuildProjectDirectory)\..\</SolutionRoot>
-    <ScriptsDir>$(SolutionRoot).scripts\\</ScriptsDir>
-    <BuildCommonRoot>$(ScriptsDir)X2ModBuildCommon\</BuildCommonRoot>
-  </PropertyGroup>
-  <Import Project="$(BuildCommonRoot)XCOM2.targets" />
 </Project>
