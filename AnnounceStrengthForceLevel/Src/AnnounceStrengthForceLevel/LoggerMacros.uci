@@ -1,0 +1,10 @@
+`define TRACE(msg) class'Logger'.static.Trace(class'Logger'.static.PadFuncName(string(GetFuncName())) $ ":" @ `msg)
+`define DEBUG(msg) class'Logger'.static.Debug(class'Logger'.static.PadFuncName(string(GetFuncName())) $ ":" @ `msg)
+`define INFO(msg)  class'Logger'.static.Info(class'Logger'.static.PadFuncName(string(GetFuncName())) $ ":" @ `msg)
+`define WARN(msg)  class'Logger'.static.Warn(class'Logger'.static.PadFuncName(string(GetFuncName())) $ ":" @ `msg)
+`define ERROR(msg) class'Logger'.static.Error(class'Logger'.static.PadFuncName(string(GetFuncName())) $ ":" @ `msg)
+`define TEST(msg)  class'Logger'.static.Test(class'Logger'.static.PadFuncName(string(GetFuncName())) $ ":" @ `msg)
+
+`define TRACE_ENTRY(msg) class'Logger'.static.Trace(class'Logger'.static.PadFuncName(string(GetFuncName())) $ ": [>> ENTER]" @ `msg)
+`define TRACE_EXIT(msg)  class'Logger'.static.Trace(class'Logger'.static.PadFuncName(string(GetFuncName())) $ ": [<< EXIT]" @ `msg)
+`define TRACE_IF(msg)    class'Logger'.static.Trace(class'Logger'.static.PadFuncName(string(GetFuncName())) $ ": [>> IF]" @ `msg)
