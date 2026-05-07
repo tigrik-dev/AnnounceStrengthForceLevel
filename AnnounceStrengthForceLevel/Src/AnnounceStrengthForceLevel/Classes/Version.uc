@@ -80,7 +80,7 @@ static function bool IsAtLeast(int Major, int Minor, int Patch)
 {
     local int CurMajor, CurMinor, CurPatch;
 
-    class'EIR_Version'.static.GetVersionNumber(CurMajor, CurMinor, CurPatch);
+    class'Version'.static.GetVersionNumber(CurMajor, CurMinor, CurPatch);
 
     return
         (CurMajor > Major) ||

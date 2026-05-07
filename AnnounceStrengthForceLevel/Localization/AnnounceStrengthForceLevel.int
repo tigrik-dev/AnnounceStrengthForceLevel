@@ -1,0 +1,5 @@
+
+AdventStrength		= "ADVENT Strength"
+ForceLevel			= "Force Level"
+StengthIncreased	= "<XGParam:StrValue0> increased from <XGParam:IntValue0> to <XGParam:IntValue1> in <XGParam:StrValue1>"
+ForceIncreased		= "<XGParam:StrValue0> increased to <XGParam:IntValue0>"

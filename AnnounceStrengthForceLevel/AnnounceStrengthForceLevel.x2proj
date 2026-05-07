@@ -24,31 +24,21 @@
     <Folder Include="ContentForCook\" />
     <Folder Include="Src\AnnounceStrengthForceLevel\" />
     <Folder Include="Src\AnnounceStrengthForceLevel\Classes\" />
-    <Folder Include="Src\ModConfigMenuAPI\" />
-    <Folder Include="Src\ModConfigMenuAPI\Classes\" />
     <Content Include="ReadMe.txt" />
     <Content Include="ModPreview.jpg" />
     <Content Include="Config\Base\XComEditor.ini" />
     <Content Include="Config\Base\XComEngine.ini" />
     <Content Include="Config\Base\XComGame.ini" />
+    <Content Include="Src\AnnounceStrengthForceLevel\Classes\AlertWatcherActor.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\AnnounceStrengthForceLevel\Classes\UISL_AlertWatcher.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\X2DLCInfo_AnnounceStrengthForceLevel.uc" />
     <Content Include="Config\XComAnnounceStrengthForceLevel_Logger.ini" />
     <Content Include="Src\AnnounceStrengthForceLevel\LoggerMacros.uci" />
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\Logger.uc" />
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\Version.uc" />
-    <Content Include="Src\ModConfigMenuAPI\MCM_API_CfgHelpers.uci" />
-    <Content Include="Src\ModConfigMenuAPI\MCM_API_Includes.uci" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Button.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Checkbox.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Dropdown.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Instance.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Label.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Setting.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_SettingsGroup.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_SettingsPage.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Slider.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\MCM_API_Spinner.uc" />
-    <Content Include="Src\ModConfigMenuAPI\Classes\UIAlertPanel_ShowEnemies.uc" />
   </ItemGroup>
 </Project>
