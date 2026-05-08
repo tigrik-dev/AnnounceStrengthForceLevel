@@ -16,6 +16,18 @@
   </PropertyGroup>
   <Import Project="$(BuildCommonRoot)XCOM2.targets" />
   <ItemGroup>
+    <Content Include="Config\XComAnnounceStrengthForceLevel.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\AnnounceStrengthForceLevel\Classes\WorldRegionLib.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\AnnounceStrengthForceLevel\MCM_API_CfgHelpers.uci">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\AnnounceStrengthForceLevel\MCM_API_Includes.uci">
+      <SubType>Content</SubType>
+    </Content>
     <Folder Include="Config\" />
     <Folder Include="Config\Base\" />
     <Folder Include="Localization\" />
@@ -24,6 +36,12 @@
     <Folder Include="ContentForCook\" />
     <Folder Include="Src\AnnounceStrengthForceLevel\" />
     <Folder Include="Src\AnnounceStrengthForceLevel\Classes\" />
+    <Content Include="Config\XComAnnounceStrengthForceLevel_MCMDefaults.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\AnnounceStrengthForceLevel.int">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="ReadMe.txt" />
     <Content Include="ModPreview.jpg" />
     <Content Include="Config\Base\XComEditor.ini" />
@@ -32,7 +50,16 @@
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\AlertWatcherActor.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\AnnounceStrengthForceLevel\Classes\MCM_Defaults.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\UISL_AlertWatcher.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\AnnounceStrengthForceLevel\Classes\UISL_MCM.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\AnnounceStrengthForceLevel\Classes\UIS_MCM.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\X2DLCInfo_AnnounceStrengthForceLevel.uc" />

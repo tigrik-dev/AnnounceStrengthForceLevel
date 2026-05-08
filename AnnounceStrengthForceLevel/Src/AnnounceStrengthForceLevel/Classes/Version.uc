@@ -119,18 +119,18 @@ static function string GetVersionStringWithPrefix()
 /**
  * Returns a user-friendly display string for UI or logs.
  *
- * Example: "Announce Advent Strength version: 0.1.0"
+ * Example: "Strength Increase Notifier version: 0.1.0"
  *
  * @return string Display string
  */
 static function string GetDisplayString()
 {
-    return "Announce Advent Strength version:" @ GetVersionString();
+    return "Strength Increase Notifier version:" @ GetVersionString();
 }
 
 defaultproperties
 {
-    MajorVersion = 0
-    MinorVersion = 1
+    MajorVersion = 1
+    MinorVersion = 0
     PatchVersion = 0
 }

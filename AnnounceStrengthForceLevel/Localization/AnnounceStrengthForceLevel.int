@@ -1,5 +1,19 @@
+[AlertWatcherActor]
+sAdventStrength = "ADVENT Strength"
+sForceLevel = "Force Level"
+sStengthIncreased = "<XGParam:StrValue0> increased from <XGParam:IntValue0> to <XGParam:IntValue1> in <XGParam:StrValue1>"
+sForceIncreased = "<XGParam:StrValue0> increased to <XGParam:IntValue0>"
 
-AdventStrength		= "ADVENT Strength"
-ForceLevel			= "Force Level"
-StengthIncreased	= "<XGParam:StrValue0> increased from <XGParam:IntValue0> to <XGParam:IntValue1> in <XGParam:StrValue1>"
-ForceIncreased		= "<XGParam:StrValue0> increased to <XGParam:IntValue0>"
+[UIS_MCM]
+sModName = "Strength Increase Notifier"
+
+sGeneralSettings_MCMText = "General Settings"
+sRegionalSettings_MCMText = "Regional Settings"
+
+NOTIFY_ADVENT_STRENGTH_Label = "Show notifications when ADVENT Strength increases"
+NOTIFY_FORCE_LEVEL_Label = "Show notifications when Force Level increases"
+PAUSE_ADVENT_STRENGTH_Label = "Pause geoscape when ADVENT Strength increases"
+PAUSE_FORCE_LEVEL_Label = "Pause geoscape when Force Level increases"
+MIN_ADVENT_STRENGTH_PAUSE_Label = "Only pause geoscape when ADVENT Strength is at least"
+MIN_FORCE_LEVEL_PAUSE_Label = "Only pause geoscape when Force Level is at least"
+ADVENT_STRENGTH_PAUSE_REGIONS_Label = "Regions for which to stop geoscape when ADVENT Strength increases"

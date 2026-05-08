@@ -1,0 +1,66 @@
+/***************************************************************************************************
+Welcome to MrNice's MCM API.
+This code base was taken from Iridar's DRL mod & adapted to SurferJay's ManualReveal mod. (#2 below)
+
+If you're reading this for the first time, then you have just added the Mod Config Menu API
+to your Mod. The Basics are setup for you, and it will compile, just not do much at the moment.
+
+Setup Steps:
+1. COPY THE FOLLOWING TO YOUR "XComEngine.ini" File:
+	[UnrealEd.EditorEngine]
+	+EditPackages=ModConfigMenuAPI
+
+	If you already have a [UnrealEd.EditorEngine] section, just add the +EditPackages underneath.
+	Although if you already have a [UnrealEd.EditorEngine] section, you probably already knew that!
+2. Update Mod Prefixes:
+	Find and replace "MRSJ_" with your mod prefix_ in the following:
+	a. Syntax in code:
+		Use CTRL+Shift+F to replace all instances of "MRSJ_" with your PREFIX_
+	b. File names:
+		Config\Base\XComMRSJ_MCM_Defaults.ini (though, I prefer putting this into my MRSJ_MCM_Defaults)
+		Src\ModName\MRSJ_MCM_Defaults.uc
+		Src\ModName\MRSJ_MCM_Screen.uc
+		Src\ModName\MRSJ_MCM_ScreenListener.uc
+
+	These disambiguation prefixes that are baked into the API are necessary to prevent ambiguity
+	issues when building against other mods that utilize functionality from the MCM.
+***************************************************************************************************/
+
+// Mr. Nice Alternate version! Works by static calling the screen class for everything.
+
+// Contains helper functions for doing proper user-configurable save data. See documentation for patterns on how to do it.
+
+
+`define MCM_DEFAULT_CLASS class'MCM_Defaults'
+`define MCM_SCREEN_CLASS class'UIS_MCM'
+
+`define MCM_CH_GetCompositeVersion()\
+    MCM_CH_IMPL_VersionMax()
+
+`define GETMCMVAR(MCMVAR) \
+    `MCM_CH_GetValue(`MCM_DEFAULT_CLASS.default.`MCMVAR, `MCMVAR)
+
+`define MCM_SCREEN_CLASS_STATIC `MCM_SCREEN_CLASS.static.
+
+`define MCM_CH_StaticVersionChecker(SrcVer,TrgVer)\
+    static function bool MCM_CH_IMPL_VersionChecker()\
+    {\
+        return (`{TrgVer} < `{SrcVer});\
+    }\
+    static function int MCM_CH_IMPL_VersionMax()\
+    {\
+        return (MCM_CH_IMPL_VersionChecker() ? (`{SrcVer}) : (`{TrgVer}));\
+    }
+
+`define MCM_CH_VersionChecker(SrcVer,TrgVer)\
+    function bool MCM_CH_IMPL_VersionChecker()\
+    {\
+        return (`{TrgVer} < `{SrcVer});\
+    }\
+    function int MCM_CH_IMPL_VersionMax()\
+    {\
+        return (MCM_CH_IMPL_VersionChecker() ? (`{SrcVer}) : (`{TrgVer}));\
+    }
+
+`define MCM_CH_GetValue(SrcVal, TrgVal)\
+    ((MCM_CH_IMPL_VersionChecker()) ? (`{SrcVal}) : (`{TrgVal}))
