@@ -1,16 +1,25 @@
-class UIS_MCM extends Object config(AnnounceStrengthForceLevel_MCM);
+/**
+ * UIS_MCM
+ *
+ * Mod Config Menu (MCM) implementation for AnnounceStrengthForceLevel.
+ *
+ * Responsibilities:
+ * - Register and initialize the MCM screen
+ * - Load and save persistent mod configuration values
+ * - Create and populate all MCM UI controls
+ * - Dynamically display contacted world regions
+ * - Handle UI state changes for dependent controls
+ * - Expose configuration values to gameplay systems
+ *
+ * @author Tigrik
+ */
+class UIS_MCM extends Object config(AnnounceStrengthForceLevel);
 
 `include(AnnounceStrengthForceLevel\Src\AnnounceStrengthForceLevel\MCM_API_Includes.uci)
 `include(AnnounceStrengthForceLevel\Src\AnnounceStrengthForceLevel\MCM_API_CfgHelpers.uci)
 `include(AnnounceStrengthForceLevel\Src\AnnounceStrengthForceLevel\LoggerMacros.uci)
 
 var config int CONFIG_VERSION;
-
-/*
-var config bool NOTIFY_ADVENT_STRENGTH, NOTIFY_FORCE_LEVEL, PAUSE_ADVENT_STRENGTH, PAUSE_FORCE_LEVEL;
-var config int	MIN_ADVENT_STRENGTH_PAUSE, MIN_FORCE_LEVEL_PAUSE;
-var config bool ADVENT_STRENGTH_PAUSE_REGION_0, ADVENT_STRENGTH_PAUSE_REGION_1, ADVENT_STRENGTH_PAUSE_REGION_2, ADVENT_STRENGTH_PAUSE_REGION_3, ADVENT_STRENGTH_PAUSE_REGION_4, ADVENT_STRENGTH_PAUSE_REGION_5, ADVENT_STRENGTH_PAUSE_REGION_6, ADVENT_STRENGTH_PAUSE_REGION_7, ADVENT_STRENGTH_PAUSE_REGION_8, ADVENT_STRENGTH_PAUSE_REGION_9, ADVENT_STRENGTH_PAUSE_REGION_10, ADVENT_STRENGTH_PAUSE_REGION_11, ADVENT_STRENGTH_PAUSE_REGION_12, ADVENT_STRENGTH_PAUSE_REGION_13, ADVENT_STRENGTH_PAUSE_REGION_14, ADVENT_STRENGTH_PAUSE_REGION_15;
-*/
 
 `MCM_API_AutoCheckBoxVars(NOTIFY_ADVENT_STRENGTH);
 `MCM_API_AutoCheckBoxVars(NOTIFY_FORCE_LEVEL);
@@ -37,14 +46,13 @@ var config bool ADVENT_STRENGTH_PAUSE_REGION_0, ADVENT_STRENGTH_PAUSE_REGION_1, 
 `MCM_API_AutoCheckBoxVars(ADVENT_STRENGTH_PAUSE_REGION_14);
 `MCM_API_AutoCheckBoxVars(ADVENT_STRENGTH_PAUSE_REGION_15);
 
-var localized string sModName, sGeneralSettings_MCMText, sRegionalSettings_MCMText;//, NOTIFY_ADVENT_STRENGTH_MCMText, NOTIFY_FORCE_LEVEL_MCMText, PAUSE_ADVENT_STRENGTH_MCMText, PAUSE_FORCE_LEVEL_MCMText, MIN_ADVENT_STRENGTH_PAUSE_MCMText, MIN_FORCE_LEVEL_PAUSE_MCMText, ADVENT_STRENGTH_PAUSE_REGIONS_MCMText;
+var localized string sModName, sGeneralSettings_MCMText, sRegionalSettings_MCMText;
 
-/*
-var MCM_API_Checkbox NOTIFY_ADVENT_STRENGTH_MCMUI, NOTIFY_FORCE_LEVEL_MCMUI, PAUSE_ADVENT_STRENGTH_MCMUI, PAUSE_FORCE_LEVEL_MCMUI;
-var MCM_API_Slider MIN_ADVENT_STRENGTH_PAUSE_MCMUI, MIN_FORCE_LEVEL_PAUSE_MCMUI;
-var MCM_API_Checkbox ADVENT_STRENGTH_PAUSE_REGION_0_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_1_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_2_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_3_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_4_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_5_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_6_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_7_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_8_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_9_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_10_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_11_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_12_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_13_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_14_MCMUI, ADVENT_STRENGTH_PAUSE_REGION_15_MCMUI;
-*/
-
+/**
+ * Registers the MCM screen callback when the screen initializes.
+ *
+ * @param Screen    Current UI screen instance
+ */
 event OnInit(UIScreen Screen)
 {
 	`MCM_API_Register(Screen, ClientModCallback);
@@ -76,6 +84,12 @@ event OnInit(UIScreen Screen)
 `MCM_API_AutoCheckBoxSaveHandler(ADVENT_STRENGTH_PAUSE_REGION_14);
 `MCM_API_AutoCheckBoxSaveHandler(ADVENT_STRENGTH_PAUSE_REGION_15);
 
+/**
+ * Handles enabling/disabling of Advent Strength pause-related controls.
+ *
+ * @param _         Setting instance that triggered the callback
+ * @param Value     New checkbox value
+ */
 simulated function PauseAdventStrengthChangeHandler(MCM_API_Setting _, bool Value)
 {
 	`TRACE_ENTRY("");
@@ -99,6 +113,12 @@ simulated function PauseAdventStrengthChangeHandler(MCM_API_Setting _, bool Valu
 	`TRACE_EXIT("");
 }
 
+/**
+ * Handles enabling/disabling of Force Level pause threshold controls.
+ *
+ * @param _         Setting instance that triggered the callback
+ * @param Value     New checkbox value
+ */
 simulated function PauseForceLevelChangeHandler(MCM_API_Setting _, bool Value)
 {
 	`TRACE_ENTRY("");
@@ -106,6 +126,18 @@ simulated function PauseForceLevelChangeHandler(MCM_API_Setting _, bool Value)
 	`TRACE_EXIT("");
 }
 
+/**
+ * Creates and populates the Mod Config Menu page.
+ *
+ * Responsibilities:
+ * - Load current configuration values
+ * - Create UI groups and controls
+ * - Dynamically add contacted region checkboxes
+ * - Initialize dependent control states
+ *
+ * @param ConfigAPI     MCM API instance
+ * @param GameMode      Current game mode
+ */
 simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 {
 	local MCM_API_SettingsPage Page;
@@ -211,11 +243,17 @@ simulated function ClientModCallback(MCM_API_Instance ConfigAPI, int GameMode)
 		}
 	}
 
+	PauseAdventStrengthChangeHandler(none, PAUSE_ADVENT_STRENGTH);
+	PauseForceLevelChangeHandler(none, PAUSE_FORCE_LEVEL);
+
 	Page.ShowSettings();
 
 	`TRACE_EXIT("");
 }
 
+/**
+ * Loads saved configuration values from MCM storage.
+ */
 simulated function LoadSavedSettings()
 {
 	`TRACE_ENTRY("");

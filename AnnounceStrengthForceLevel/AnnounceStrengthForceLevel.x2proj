@@ -16,7 +16,10 @@
   </PropertyGroup>
   <Import Project="$(BuildCommonRoot)XCOM2.targets" />
   <ItemGroup>
-    <Content Include="Config\XComAnnounceStrengthForceLevel.ini">
+    <Content Include="Config\XComAnnounceStrengthForceLevel_Config.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\AnnounceStrengthForceLevel.rus">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\WorldRegionLib.uc">

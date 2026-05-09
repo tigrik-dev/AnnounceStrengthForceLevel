@@ -1,9 +1,34 @@
-class AlertWatcherActor extends Actor config(AnnounceStrengthForceLevel);
+/**
+ * AlertWatcherActor
+ *
+ * Lightweight geoscape polling actor responsible for monitoring
+ * LWOTC regional strategy values such as:
+ * - ADVENT Strength (Local Alert Level)
+ * - Force Level (Local Force Level)
+ *
+ * Responsibilities:
+ * - Periodically poll all world regions while on the geoscape
+ * - Detect increases in ADVENT Strength
+ * - Detect both global and regional Force Level increases
+ * - Display strategy notifications to the player
+ * - Optionally pause the geoscape when configured via MCM
+ * - Maintain cached regional values to detect changes efficiently
+ * - Enforce singleton behavior to prevent duplicate polling actors
+ *
+ * Notes:
+ * - Polling rate is configurable through MCM/config
+ * - Minimum polling interval is clamped to 0.1 seconds
+ * - Global Force Level increases are determined by majority detection
+ * - Regional Force Level increases are treated as modded/special cases
+ *
+ * @author Tigrik
+ */
+class AlertWatcherActor extends Actor config(AnnounceStrengthForceLevel_Config);
 
 `include(AnnounceStrengthForceLevel\Src\AnnounceStrengthForceLevel\LoggerMacros.uci)
 `include(AnnounceStrengthForceLevel\Src\AnnounceStrengthForceLevel\MCM_API_CfgHelpers.uci)
 
-var localized string sAdventStrength, sForceLevel, sStengthIncreased, sForceIncreased;
+var localized string sStengthIncreased, sForceIncreased, sForceRegionIncreased;
 
 var config float fPollingRate;
 
@@ -14,7 +39,15 @@ var float TimeAccumulator, EffectivePollingRate;
 var bool bInitialized;
 var int LastProcessedDayStamp;
 
-// This guarantees singleton behavior even if multiple somehow get spawned simultaneously.
+/**
+ * Initializes the watcher actor after spawning.
+ *
+ * Responsibilities:
+ * - Enforce singleton behavior
+ * - Destroy duplicate watcher actors
+ * - Initialize effective polling rate
+ * - Clamp polling rate to a minimum safe value
+ */
 event PostBeginPlay()
 {
     local AlertWatcherActor ExistingWatcher;
@@ -38,6 +71,17 @@ event PostBeginPlay()
 	`TRACE_EXIT("");
 }
 
+/**
+ * Performs periodic geoscape polling updates.
+ *
+ * Responsibilities:
+ * - Accumulate real time between polling intervals
+ * - Prevent excessive polling frequency
+ * - Detect geoscape time progression
+ * - Trigger regional strategy value checks
+ *
+ * @param DeltaTime    Time elapsed since previous frame
+ */
 event Tick(float DeltaTime)
 {
     local TDateTime CurrentTime;
@@ -62,16 +106,37 @@ event Tick(float DeltaTime)
     CheckAlertLevels();
 }
 
+/**
+ * Checks all world regions for changes in:
+ * - ADVENT Strength (Alert Level)
+ * - Force Level
+ *
+ * Responsibilities:
+ * - Compare current regional values against cached values
+ * - Detect ADVENT Strength increases
+ * - Detect Force Level increases
+ * - Distinguish between global and regional Force Level changes
+ * - Display notifications
+ * - Pause geoscape if configured via MCM
+ * - Update cached values after processing
+ *
+ * Global Force Level increases are determined by majority detection:
+ * if at least half of all regions increased simultaneously,
+ * the increase is considered global.
+ *
+ * Regional-only increases are treated as special/modded behavior.
+ */
 function CheckAlertLevels()
 {
     local XComGameStateHistory History;
     local XComGameState_WorldRegion Region;
     local XComGameState_WorldRegion_LWStrategyAI RegionalAI;
 
-    local int CachedIndex, NewAlertLevel, NewForceLevel;
+    local int i, CachedIndex, NewAlertLevel, NewForceLevel, MajorityForceLevel, BestCount, Count, TestForceLevel;
 	local XGParamTag ParamTag;
 	local string sNotify;
-	local bool firstRegion;
+	local array<int> IncreasedForceLevels;
+	local array<string> IncreasedForceRegionNames;
 
 	`TRACE_ENTRY("");
 
@@ -84,7 +149,6 @@ function CheckAlertLevels()
 	}
 
     History = `XCOMHISTORY;
-	firstRegion = true;
 
     foreach History.IterateByClassType(class'XComGameState_WorldRegion', Region)
     {
@@ -115,8 +179,7 @@ function CheckAlertLevels()
 				ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
 				ParamTag.IntValue0 = CachedAlertLevels[CachedIndex];
 				ParamTag.IntValue1 = NewAlertLevel;
-				ParamTag.StrValue0 = sAdventStrength;
-				ParamTag.StrValue1 = Region.GetDisplayName();
+				ParamTag.StrValue0 = Region.GetDisplayName();
 				sNotify = `XEXPAND.ExpandString(sStengthIncreased);
 
 				CachedAlertLevels[CachedIndex] = NewAlertLevel;
@@ -125,32 +188,93 @@ function CheckAlertLevels()
 				`HQPRES.Notify(sNotify, class'UIUtilities_Image'.const.EventQueue_Advent);
             }
 
-			// Only check for Force Level increase in the first abtitrary region
-			// in the base LWOTC Force Level will be the same in all regions.
-			if (firstRegion && NewForceLevel > CachedForceLevels[CachedIndex])
+			if (NewForceLevel > CachedForceLevels[CachedIndex])
 			{
-				// Pause Geoscape if MCM options permit it
-				if (Get_PAUSE_FORCE_LEVEL() && NewForceLevel >= Get_MIN_FORCE_LEVEL_PAUSE()) PauseGeoscape();
-
-				// Don't notify if MCM option "Show notifications when Force Level increases" is unchecked
-				if (!Get_NOTIFY_FORCE_LEVEL()) continue;
+				IncreasedForceRegionNames.AddItem(Region.GetDisplayName());
+				IncreasedForceLevels.AddItem(NewForceLevel);
 
 				CachedForceLevels[CachedIndex] = NewForceLevel;
+			}
+		}
+    }
 
+	// Handle Force Level notifications after all regions were scanned
+	if (IncreasedForceRegionNames.Length == 0) return;
+
+	// GLOBAL increase (default behavior)
+	if (IncreasedForceRegionNames.Length >= 8)
+	{
+		// Find most common force level
+		for (i = 0; i < IncreasedForceLevels.Length; ++i)
+		{
+			TestForceLevel = IncreasedForceLevels[i];
+			Count = 0;
+
+			foreach IncreasedForceLevels(NewForceLevel)
+			{
+				if (NewForceLevel == TestForceLevel) ++Count;
+			}
+
+			if (Count > BestCount)
+			{
+				BestCount = Count;
+				MajorityForceLevel = TestForceLevel;
+			}
+		}
+
+		// Pause Geoscape if MCM options permit it
+		if (Get_PAUSE_FORCE_LEVEL() && MajorityForceLevel >= Get_MIN_FORCE_LEVEL_PAUSE()) PauseGeoscape();
+
+		// Notify if enabled
+		if (Get_NOTIFY_FORCE_LEVEL())
+		{
+			ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+			ParamTag.IntValue0 = MajorityForceLevel;
+			sNotify = `XEXPAND.ExpandString(sForceIncreased);
+
+			`INFO(sNotify);
+			`HQPRES.Notify(sNotify, class'UIUtilities_Image'.const.EventQueue_Alien);
+		}
+	}
+	// REGIONAL increase (e.g. by a mod "A Requiem For Man: Gameplay Mutators")
+	else
+	{
+		for (i = 0; i < IncreasedForceRegionNames.Length; ++i)
+		{
+			NewForceLevel = IncreasedForceLevels[i];
+
+			// Pause if enabled
+			if (Get_PAUSE_FORCE_LEVEL() && NewForceLevel >= Get_MIN_FORCE_LEVEL_PAUSE()) PauseGeoscape();
+
+			// Notify if enabled
+			if (Get_NOTIFY_FORCE_LEVEL())
+			{
 				ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
 				ParamTag.IntValue0 = NewForceLevel;
-				ParamTag.StrValue0 = sForceLevel;
-				sNotify = `XEXPAND.ExpandString(sForceIncreased);
+				ParamTag.StrValue0 = IncreasedForceRegionNames[i];
+				sNotify = `XEXPAND.ExpandString(sForceRegionIncreased);
 
 				`INFO(sNotify);
 				`HQPRES.Notify(sNotify, class'UIUtilities_Image'.const.EventQueue_Alien);
 			}
-			firstRegion = false;
-        }
-    }
+		}
+	}
+
 	`TRACE_EXIT("");
 }
 
+
+/**
+ * Initializes cached regional strategy values.
+ *
+ * Responsibilities:
+ * - Populate cached region object IDs
+ * - Populate cached ADVENT Strength values
+ * - Populate cached Force Level values
+ * - Prepare watcher state for future polling comparisons
+ *
+ * This function is executed once during the first polling cycle.
+ */
 function InitializeCache()
 {
     local XComGameStateHistory History;
@@ -179,6 +303,16 @@ function InitializeCache()
 	`TRACE_EXIT("AlertWatcher: Cache initialized with " $ CachedRegionIDs.Length $ " regions");
 }
 
+/**
+ * Pauses the geoscape simulation.
+ *
+ * Responsibilities:
+ * - Pause geoscape progression
+ * - Avoid interrupting active flight mode
+ * - Resume geoscape immediately after pausing
+ *
+ * Used when configured MCM thresholds are reached.
+ */
 function PauseGeoscape()
 {
 	local UIStrategyMap StrategyMap;
@@ -198,6 +332,22 @@ function PauseGeoscape()
 	`TRACE_EXIT("");
 }
 
+/**
+ * Determines whether geoscape pausing is enabled
+ * for a specific world region.
+ *
+ * Responsibilities:
+ * - Map region index values to corresponding MCM settings
+ * - Return whether pausing is enabled for that region
+ * - Validate region index range
+ *
+ * Supported region indices:
+ * - 0 through 15
+ *
+ * @param RegionIndex    Internal world region index
+ *
+ * @return bool          True if pausing is enabled for the region
+ */
 function bool ShouldPauseForRegion(int RegionIndex)
 {
 	`TRACE_ENTRY("RegionIndex:" @ RegionIndex);

@@ -1,4 +1,4 @@
-class MCM_Defaults extends Object config(XComAnnounceStrengthForceLevel_MCMDefaults);
+class MCM_Defaults extends Object config(AnnounceStrengthForceLevel_MCMDefaults);
 
 var config int Version;
 
