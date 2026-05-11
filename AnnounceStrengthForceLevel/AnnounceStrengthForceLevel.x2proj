@@ -16,6 +16,14 @@
   </PropertyGroup>
   <Import Project="$(BuildCommonRoot)XCOM2.targets" />
   <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="Config\Base\" />
+    <Folder Include="Localization\" />
+    <Folder Include="Src\" />
+    <Folder Include="Content\" />
+    <Folder Include="ContentForCook\" />
+    <Folder Include="Src\AnnounceStrengthForceLevel\" />
+    <Folder Include="Src\AnnounceStrengthForceLevel\Classes\" />
     <Content Include="Config\XComAnnounceStrengthForceLevel_Config.ini">
       <SubType>Content</SubType>
     </Content>
@@ -31,14 +39,6 @@
     <Content Include="Src\AnnounceStrengthForceLevel\MCM_API_Includes.uci">
       <SubType>Content</SubType>
     </Content>
-    <Folder Include="Config\" />
-    <Folder Include="Config\Base\" />
-    <Folder Include="Localization\" />
-    <Folder Include="Src\" />
-    <Folder Include="Content\" />
-    <Folder Include="ContentForCook\" />
-    <Folder Include="Src\AnnounceStrengthForceLevel\" />
-    <Folder Include="Src\AnnounceStrengthForceLevel\Classes\" />
     <Content Include="Config\XComAnnounceStrengthForceLevel_MCMDefaults.ini">
       <SubType>Content</SubType>
     </Content>
@@ -70,5 +70,7 @@
     <Content Include="Src\AnnounceStrengthForceLevel\LoggerMacros.uci" />
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\Logger.uc" />
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\Version.uc" />
+    <Content Include="PublishedFileId.ID" />
+    <Content Include="Localization\AnnounceStrengthForceLevel.esn" />
   </ItemGroup>
 </Project>
