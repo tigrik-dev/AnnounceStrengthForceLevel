@@ -1,5 +1,6 @@
 [AlertWatcherActor]
 sStengthIncreased = "ADVENT Strength increased from <XGParam:IntValue0> to <XGParam:IntValue1> in <XGParam:StrValue0>"
+sStengthDecreased = "ADVENT Strength descreased from <XGParam:IntValue0> to <XGParam:IntValue1> in <XGParam:StrValue0>"
 sForceIncreased = "Force Level increased to <XGParam:IntValue0>"
 sForceRegionIncreased = "Force Level increased to <XGParam:IntValue0> in <XGParam:StrValue0>"
 
@@ -10,8 +11,10 @@ sGeneralSettings_MCMText = "General Settings"
 sRegionalSettings_MCMText = "Pause scanning when ADVENT Strength increases in"
 
 NOTIFY_ADVENT_STRENGTH_Label = "Show notifications when ADVENT Strength increases"
+NOTIFY_ADVENT_STRENGTH_DEC_Label = "Show notifications when ADVENT Strength decreases"
 NOTIFY_FORCE_LEVEL_Label = "Show notifications when Force Level increases"
 PAUSE_ADVENT_STRENGTH_Label = "Pause scanning when ADVENT Strength increases"
+PAUSE_ADVENT_STRENGTH_DEC_Label = "Pause scanning when ADVENT Strength decreases"
 PAUSE_FORCE_LEVEL_Label = "Pause scanning when Force Level increases"
 MIN_ADVENT_STRENGTH_PAUSE_Label = "Min ADVENT Strength to pause scanning"
 MIN_FORCE_LEVEL_PAUSE_Label = "Min Force Level to pause scanning"

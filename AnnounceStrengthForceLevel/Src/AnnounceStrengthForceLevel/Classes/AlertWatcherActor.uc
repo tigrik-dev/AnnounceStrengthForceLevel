@@ -28,7 +28,7 @@ class AlertWatcherActor extends Actor config(AnnounceStrengthForceLevel_Config);
 `include(AnnounceStrengthForceLevel\Src\AnnounceStrengthForceLevel\LoggerMacros.uci)
 `include(AnnounceStrengthForceLevel\Src\AnnounceStrengthForceLevel\MCM_API_CfgHelpers.uci)
 
-var localized string sStengthIncreased, sForceIncreased, sForceRegionIncreased;
+var localized string sStengthIncreased, sStengthDecreased, sForceIncreased, sForceRegionIncreased;
 
 var config float fPollingRate;
 
@@ -168,24 +168,46 @@ function CheckAlertLevels()
         }
         else
         {
-            if (Region.HaveMadeContact() && !RegionalAI.bLiberated && NewAlertLevel > CachedAlertLevels[CachedIndex])
+            if (Region.HaveMadeContact() && !RegionalAI.bLiberated)
             {
-				// Pause Geoscape if MCM options permit it
-				if (Get_PAUSE_ADVENT_STRENGTH() && NewAlertLevel >= Get_MIN_ADVENT_STRENGTH_PAUSE() && ShouldPauseForRegion(class'WorldRegionLib'.static.GetRegionIndex(Region))) PauseGeoscape();
+				if (NewAlertLevel > CachedAlertLevels[CachedIndex])
+				{
+					// Pause Geoscape if MCM options permit it
+					if (Get_PAUSE_ADVENT_STRENGTH() && NewAlertLevel >= Get_MIN_ADVENT_STRENGTH_PAUSE() && ShouldPauseForRegion(class'WorldRegionLib'.static.GetRegionIndex(Region))) PauseGeoscape();
 
-				// Don't notify if MCM option "Show notifications when ADVENT Strength increases" is unchecked
-				if (!Get_NOTIFY_ADVENT_STRENGTH()) continue;
+					// Don't notify if MCM option "Show notifications when ADVENT Strength increases" is unchecked
+					if (!Get_NOTIFY_ADVENT_STRENGTH()) continue;
 
-				ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
-				ParamTag.IntValue0 = CachedAlertLevels[CachedIndex];
-				ParamTag.IntValue1 = NewAlertLevel;
-				ParamTag.StrValue0 = Region.GetDisplayName();
-				sNotify = `XEXPAND.ExpandString(sStengthIncreased);
+					ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+					ParamTag.IntValue0 = CachedAlertLevels[CachedIndex];
+					ParamTag.IntValue1 = NewAlertLevel;
+					ParamTag.StrValue0 = Region.GetDisplayName();
+					sNotify = `XEXPAND.ExpandString(sStengthIncreased);
 
-				CachedAlertLevels[CachedIndex] = NewAlertLevel;
+					CachedAlertLevels[CachedIndex] = NewAlertLevel;
 
-				`INFO(sNotify);
-				`HQPRES.Notify(sNotify, class'UIUtilities_Image'.const.EventQueue_Advent);
+					`INFO(sNotify);
+					`HQPRES.Notify(sNotify, class'UIUtilities_Image'.const.EventQueue_Advent);
+				}
+				else if (NewAlertLevel < CachedAlertLevels[CachedIndex])
+				{
+					// Pause Geoscape if MCM options permit it
+					if (Get_PAUSE_ADVENT_STRENGTH_DEC() && (NewAlertLevel >= Get_MIN_ADVENT_STRENGTH_PAUSE() || CachedAlertLevels[CachedIndex] >= Get_MIN_ADVENT_STRENGTH_PAUSE())) PauseGeoscape();
+					
+					// Don't notify if MCM option "Show notifications when ADVENT Strength decreases" is unchecked
+					if (!Get_NOTIFY_ADVENT_STRENGTH_DEC()) continue;
+
+					ParamTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));
+					ParamTag.IntValue0 = CachedAlertLevels[CachedIndex];
+					ParamTag.IntValue1 = NewAlertLevel;
+					ParamTag.StrValue0 = Region.GetDisplayName();
+					sNotify = `XEXPAND.ExpandString(sStengthDecreased);
+
+					CachedAlertLevels[CachedIndex] = NewAlertLevel;
+
+					`INFO(sNotify);
+					`HQPRES.Notify(sNotify, class'UIUtilities_Image'.const.EventQueue_Advent);
+				}
             }
 
 			if (NewForceLevel > CachedForceLevels[CachedIndex])
@@ -383,6 +405,11 @@ function bool Get_NOTIFY_ADVENT_STRENGTH()
 	return `MCM_CH_GetValue(class'MCM_Defaults'.default.NOTIFY_ADVENT_STRENGTH, class'UIS_MCM'.default.NOTIFY_ADVENT_STRENGTH);
 }
 
+function bool Get_NOTIFY_ADVENT_STRENGTH_DEC()
+{
+	return `MCM_CH_GetValue(class'MCM_Defaults'.default.NOTIFY_ADVENT_STRENGTH_DEC, class'UIS_MCM'.default.NOTIFY_ADVENT_STRENGTH_DEC);
+}
+
 function bool Get_NOTIFY_FORCE_LEVEL()
 {
 	return `MCM_CH_GetValue(class'MCM_Defaults'.default.NOTIFY_FORCE_LEVEL, class'UIS_MCM'.default.NOTIFY_FORCE_LEVEL);
@@ -391,6 +418,11 @@ function bool Get_NOTIFY_FORCE_LEVEL()
 function bool Get_PAUSE_ADVENT_STRENGTH()
 {
 	return `MCM_CH_GetValue(class'MCM_Defaults'.default.PAUSE_ADVENT_STRENGTH, class'UIS_MCM'.default.PAUSE_ADVENT_STRENGTH);
+}
+
+function bool Get_PAUSE_ADVENT_STRENGTH_DEC()
+{
+	return `MCM_CH_GetValue(class'MCM_Defaults'.default.PAUSE_ADVENT_STRENGTH_DEC, class'UIS_MCM'.default.PAUSE_ADVENT_STRENGTH_DEC);
 }
 
 function bool Get_PAUSE_FORCE_LEVEL()

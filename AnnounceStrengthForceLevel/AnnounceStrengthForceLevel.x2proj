@@ -72,5 +72,6 @@
     <Content Include="Src\AnnounceStrengthForceLevel\Classes\Version.uc" />
     <Content Include="PublishedFileId.ID" />
     <Content Include="Localization\AnnounceStrengthForceLevel.esn" />
+    <Content Include="Localization\AnnounceStrengthForceLevel.chn" />
   </ItemGroup>
 </Project>
